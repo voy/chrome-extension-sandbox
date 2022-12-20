@@ -2,7 +2,6 @@
   "name": "chrome-extension-sandbox",
   "version": "1.0.0",
   "description": "This is my sandbox to play around with features and setup",
-  "main": "index.js",
   "scripts": {
     "watch": "parcel watch --dist-dir dist --public-url . plainPopup.html",
     "build": "parcel build --dist-dir dist --public-url . plainPopup.html",
