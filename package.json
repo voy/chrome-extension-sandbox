@@ -1,0 +1,27 @@
+{
+  "name": "chrome-extension-sandbox",
+  "version": "1.0.0",
+  "description": "This is my sandbox to play around with features and setup",
+  "main": "index.js",
+  "scripts": {
+    "watch": "parcel watch --dist-dir dist --public-url . plainPopup.html",
+    "build": "parcel build --dist-dir dist --public-url . plainPopup.html",
+    "clean": "rm -rf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voy/chrome-extension-sandbox.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/voy/chrome-extension-sandbox/issues"
+  },
+  "homepage": "https://github.com/voy/chrome-extension-sandbox#readme",
+  "devDependencies": {
+    "@types/chrome": "^0.0.204",
+    "parcel": "^2.8.2",
+    "typescript": "^4.9.4"
+  }
+}
