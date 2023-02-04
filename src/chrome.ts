@@ -4,10 +4,11 @@
 
 export const getTabsInCurrentWindow = async (): Promise<chrome.tabs.Tab[]> => {
   const currentWindow = await chrome.windows.getCurrent();
-  return await chrome.tabs.query({ windowId: currentWindow.id });
+  const tabs = await chrome.tabs.query({ windowId: currentWindow.id });
+  return tabs.filter((tab) => !tab.pinned);
 };
 
-const findHighlightedTab = (
+export const findHighlightedTab = (
   tabs: chrome.tabs.Tab[]
 ): chrome.tabs.Tab | undefined => {
   return tabs.find((tab) => tab.highlighted);
@@ -17,16 +18,27 @@ export const closeTabs = async (tabs: chrome.tabs.Tab[]): Promise<void> => {
   const currentTab = findHighlightedTab(tabs);
   let tabsToClose: chrome.tabs.Tab[];
 
-  if (tabs.length === 1) {
-    tabsToClose = [...tabs];
-  } else if (currentTab) {
+  if (currentTab) {
     tabsToClose = tabs.filter((tab) => tab.id !== currentTab.id);
   } else {
-    tabsToClose = [...tabs].sort((a, b) => b.index - a.index);
-    tabsToClose.pop();
+    tabsToClose = tabs;
   }
 
   if (tabsToClose.length > 0) {
     await chrome.tabs.remove(tabsToClose.map((tab) => tab.id!));
   }
+};
+
+/**
+ * Filter tabs by segment of hostname.
+ */
+export const filterTabsBySegment = (
+  segment: string,
+  tabs: chrome.tabs.Tab[]
+) => {
+  return tabs.filter((tab) => {
+    if (!tab.url) return false;
+    const hostname = new URL(tab.url).hostname;
+    return new RegExp(`(^|\.)${segment}$`).test(hostname);
+  });
 };

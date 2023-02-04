@@ -5,7 +5,6 @@ export const groupBy = <T>(
   const groups = new Map();
   arr.forEach((item) => {
     const key = keyFn(item);
-    console.log(key);
     if (key) {
       groups.set(key, (groups.get(key) || []).concat([item]));
     }
