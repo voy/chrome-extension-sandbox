@@ -1,7 +1,7 @@
 #root {
   width: 280px;
   max-height: 300px;
-  overflow-y: scroll;
+  overflow-y: auto;
   font-size: 10pt;
 }
 

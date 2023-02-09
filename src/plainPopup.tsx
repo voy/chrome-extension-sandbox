@@ -18,7 +18,6 @@ const sortGroupsBySize = (
   const currentTabHostname =
     currentTab?.url && new URL(currentTab.url).hostname;
   return [...groups.entries()]
-    .filter(([_key, tabs]) => tabs.length > 1)
     .map(([key, tabs]) => ({ key, tabs }))
     .sort((a, b) => {
       // If the current tab is in the group, move it to the top
