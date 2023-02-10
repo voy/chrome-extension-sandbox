@@ -28,7 +28,3 @@ li span span:hover {
 li span span:hover ~ span {
   color: red;
 }
-
-li:first-of-type {
-  border-bottom: 1px solid #ccc;
-}

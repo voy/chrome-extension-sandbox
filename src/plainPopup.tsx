@@ -10,7 +10,13 @@ import { TabGroupsList } from "./components/TabGroupsList";
 import { TabGroup } from "./types";
 import { groupBy } from "./utils/groupBy";
 import { isChromeTab } from "./utils/hostname";
-import { addHostname, createTree, getTabGroups, TreeRoot } from "./utils/tree";
+import {
+  addHostname,
+  createTree,
+  getJunctionSegments,
+  getTabGroups,
+  TreeRoot,
+} from "./utils/tree";
 
 const sortGroupsBySize = (
   groups: Map<string, chrome.tabs.Tab[]>,
@@ -65,7 +71,7 @@ const App = () => {
       .sort((a, b) => {
         return b[1] - a[1];
       })
-      .map(([key, value]) => key);
+      .map(([key]) => key);
 
     setTree(tree);
     setTabGroups(sortedTabGroups);

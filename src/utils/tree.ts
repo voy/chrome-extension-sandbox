@@ -7,6 +7,7 @@ export interface TreeNode {
   fqdn: string;
   tabs: chrome.tabs.Tab[];
   children: TreeNode[];
+  isGroup: boolean;
 }
 
 type HostnameSegments = string[];
@@ -38,6 +39,8 @@ export const addHostname = (
   const segments = hostnameToSegments(hostname);
   const lastPart = segments.pop();
 
+  console.log("addHostname", hostname, segments, lastPart);
+
   if (!lastPart) {
     return;
   }
@@ -48,13 +51,16 @@ export const addHostname = (
 
   if (next) {
     next.tabs.push(tab);
+    next.isGroup = next.isGroup || segments.length === 0;
   } else {
     const newNode: TreeNode = {
       label: lastPart,
       fqdn: path.join("."),
       tabs: [tab],
       children: [],
+      isGroup: segments.length === 0,
     };
+    console.log("newNode", newNode);
     next = newNode;
     node.children.push(newNode);
   }
@@ -96,17 +102,20 @@ export const getJunctionSegments = (
   const junctionSegments: JunctionSegment[] = [];
   const buffer: JunctionSegment[] = [];
 
-  const reduceBuffer = (): JunctionSegment => {
-    return {
-      label: buffer.map((segment) => segment.label).join("."),
-      fqdn: buffer[0].fqdn,
-    };
+  const flushBuffer = () => {
+    if (buffer.length) {
+      junctionSegments.push({
+        label: buffer.map((segment) => segment.label).join("."),
+        fqdn: buffer[0].fqdn,
+      });
+    }
+
+    buffer.length = 0;
   };
 
   for (const pathNode of path) {
-    if (pathNode.children.length > 1) {
-      junctionSegments.push(reduceBuffer());
-      buffer.length = 0;
+    if (pathNode.children.length > 1 || pathNode.isGroup) {
+      flushBuffer();
     }
 
     if (!pathNode.label) {
@@ -116,7 +125,7 @@ export const getJunctionSegments = (
     buffer.push({ label: pathNode.label, fqdn: pathNode.fqdn });
   }
 
-  junctionSegments.push(reduceBuffer());
+  flushBuffer();
 
   return junctionSegments;
 };
@@ -132,12 +141,11 @@ export const getTabGroups = (tree: TreeRoot): Map<string, number> => {
       continue;
     }
 
-    // add another condition to check if the node is a leaf node
-    if (node.children.length === 0) {
+    if (node.children.length === 0 || node.isGroup) {
       leafNodes.push(node);
-    } else {
-      queue.push(...node.children);
     }
+
+    queue.push(...node.children);
   }
 
   return new Map(leafNodes.map((node) => [node.fqdn, node.tabs.length]));

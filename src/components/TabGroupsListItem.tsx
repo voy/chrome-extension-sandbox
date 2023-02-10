@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import {
   getFqdnPath,
@@ -24,9 +24,11 @@ export const TabGroupsListItem: React.FC<TabGroupsListItemProps> = (props) => {
   };
 
   const junctionSegments = getJunctionSegments(tabTree, hostname);
-  const [tabCount, setTabCount] = React.useState<number>(
-    getSegmentTabCount(junctionSegments[0])
-  );
+  const [tabCount, setTabCount] = useState<number>(() => {
+    const firstSegment = junctionSegments[0];
+    if (!firstSegment) return 0;
+    return getSegmentTabCount(firstSegment);
+  });
 
   const handleClick = (segment: JunctionSegment) => {
     const path = getFqdnPath(tabTree, segment.fqdn);
