@@ -10,6 +10,7 @@ import { TabGroupsList } from "./components/TabGroupsList";
 import { TabGroup } from "./types";
 import { groupBy } from "./utils/groupBy";
 import { isChromeTab } from "./utils/hostname";
+import { addHostname, createTree, getTabGroups, TreeRoot } from "./utils/tree";
 
 const sortGroupsBySize = (
   groups: Map<string, chrome.tabs.Tab[]>,
@@ -43,18 +44,31 @@ const getTabGroupsSortedBySize = (tabs: chrome.tabs.Tab[]) => {
   return sortGroupsBySize(groups, currentTab);
 };
 
-const getSortedTabGroups = async () => {
+const getTabTree = async () => {
   const tabsInCurrentWindow = await getTabsInCurrentWindow();
-  const sortedTabGroups = getTabGroupsSortedBySize(tabsInCurrentWindow);
-  return sortedTabGroups;
+  const tree = createTree();
+  for (const tab of tabsInCurrentWindow) {
+    if (!tab.url || isChromeTab(tab.url)) continue;
+    addHostname(tree, new URL(tab.url).hostname, tab);
+  }
+  return tree;
 };
 
 const App = () => {
-  const [tabGroups, setTabGroups] = React.useState<TabGroup[]>([]);
+  const [tabGroups, setTabGroups] = React.useState<string[]>([]);
+  const [tree, setTree] = React.useState<TreeRoot>();
 
   const updateTabGroups = async () => {
-    const tabGroups = await getSortedTabGroups();
-    setTabGroups(tabGroups);
+    const tree = await getTabTree();
+    const tabGroups = getTabGroups(tree);
+    const sortedTabGroups = Array.from(tabGroups.entries())
+      .sort((a, b) => {
+        return b[1] - a[1];
+      })
+      .map(([key, value]) => key);
+
+    setTree(tree);
+    setTabGroups(sortedTabGroups);
   };
 
   React.useEffect(() => {
@@ -66,7 +80,11 @@ const App = () => {
     await updateTabGroups();
   };
 
-  return <TabGroupsList tabGroups={tabGroups} onClick={handleClick} />;
+  if (!tree) return null;
+
+  return (
+    <TabGroupsList tabGroups={tabGroups} tabTree={tree} onClick={handleClick} />
+  );
 };
 
 ReactDOM.render(<App />, document.getElementById("root"));

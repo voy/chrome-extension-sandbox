@@ -21,10 +21,14 @@ li:hover {
   background-color: #eee;
 }
 
-li:first-of-type {
-  border-bottom: 1px solid #ccc;
+li span span:hover {
+  color: red;
 }
 
-.hover {
+li span span:hover ~ span {
   color: red;
+}
+
+li:first-of-type {
+  border-bottom: 1px solid #ccc;
 }

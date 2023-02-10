@@ -1,37 +1,29 @@
 import React, { useMemo } from "react";
 import { filterTabsBySegment } from "../chrome";
 
-import { TabGroup } from "../types";
+import { TreeRoot } from "../utils/tree";
 import { TabGroupsListItem } from "./TabGroupsListItem";
 
 interface TabGroupsListProps {
-  tabGroups: TabGroup[];
+  tabGroups: string[];
+  tabTree: TreeRoot;
   onClick: (tabs: chrome.tabs.Tab[]) => void;
 }
 
 export const TabGroupsList: React.FC<TabGroupsListProps> = ({
   tabGroups,
+  tabTree,
   onClick,
 }) => {
-  const allTabs = useMemo(
-    () => tabGroups.flatMap((tabGroup) => tabGroup.tabs),
-    [tabGroups]
-  );
-
-  const handleClick = (segment: string) => {
-    const segmentTabs = filterTabsBySegment(segment, allTabs);
-    onClick(segmentTabs);
-  };
-
   return (
     <ul>
-      {tabGroups.map((option) => {
+      {tabGroups.map((hostname) => {
         return (
           <TabGroupsListItem
-            key={option.key}
-            allTabs={allTabs}
-            tabGroup={option}
-            onClick={handleClick}
+            key={hostname}
+            hostname={hostname}
+            tabTree={tabTree}
+            onClick={(tabs) => onClick(tabs)}
           />
         );
       })}
