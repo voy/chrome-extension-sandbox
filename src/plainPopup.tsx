@@ -1,22 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import {
-  closeTabs,
-  findHighlightedTab,
-  getTabsInCurrentWindow,
-} from "./chrome";
+import { closeTabs, getTabsInCurrentWindow } from "./chrome";
 import { TabGroupsList } from "./components/TabGroupsList";
-import { TabGroup } from "./types";
-import { groupBy } from "./utils/groupBy";
 import { isChromeTab } from "./utils/hostname";
-import {
-  addHostname,
-  createTree,
-  getJunctionSegments,
-  getTabGroups,
-  TreeRoot,
-} from "./utils/tree";
+import { addHostname, createTree, getTabGroups, TreeRoot } from "./utils/tree";
 
 const getTabTree = async () => {
   const tabsInCurrentWindow = await getTabsInCurrentWindow();

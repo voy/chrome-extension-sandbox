@@ -8,7 +8,7 @@ export const getTabsInCurrentWindow = async (): Promise<chrome.tabs.Tab[]> => {
   return tabs.filter((tab) => !tab.pinned);
 };
 
-export const findHighlightedTab = (
+const findHighlightedTab = (
   tabs: chrome.tabs.Tab[]
 ): chrome.tabs.Tab | undefined => {
   return tabs.find((tab) => tab.highlighted);
