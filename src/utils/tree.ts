@@ -39,8 +39,6 @@ export const addHostname = (
   const segments = hostnameToSegments(hostname);
   const lastPart = segments.pop();
 
-  console.log("addHostname", hostname, segments, lastPart);
-
   if (!lastPart) {
     return;
   }
@@ -60,7 +58,6 @@ export const addHostname = (
       children: [],
       isGroup: segments.length === 0,
     };
-    console.log("newNode", newNode);
     next = newNode;
     node.children.push(newNode);
   }

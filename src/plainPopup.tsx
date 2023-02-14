@@ -18,38 +18,6 @@ import {
   TreeRoot,
 } from "./utils/tree";
 
-const sortGroupsBySize = (
-  groups: Map<string, chrome.tabs.Tab[]>,
-  currentTab?: chrome.tabs.Tab
-): TabGroup[] => {
-  const currentTabHostname =
-    currentTab?.url && new URL(currentTab.url).hostname;
-  return [...groups.entries()]
-    .map(([key, tabs]) => ({ key, tabs }))
-    .sort((a, b) => {
-      // If the current tab is in the group, move it to the top
-      if (a.key === currentTabHostname) return -1;
-      if (b.key === currentTabHostname) return 1;
-      return b.tabs.length - a.tabs.length;
-    });
-};
-
-const getTabGroupsSortedBySize = (tabs: chrome.tabs.Tab[]) => {
-  const groups: Map<string, chrome.tabs.Tab[]> = groupBy(tabs, (tab) => {
-    if (!tab.url || isChromeTab(tab.url)) return;
-    return new URL(tab.url).hostname;
-  });
-
-  const chromeTabs = tabs.filter((tab) => isChromeTab(tab.url!));
-  if (chromeTabs.length > 0) {
-    groups.set("Chrome", chromeTabs);
-  }
-
-  const currentTab = findHighlightedTab(tabs);
-
-  return sortGroupsBySize(groups, currentTab);
-};
-
 const getTabTree = async () => {
   const tabsInCurrentWindow = await getTabsInCurrentWindow();
   const tree = createTree();

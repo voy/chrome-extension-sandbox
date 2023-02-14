@@ -28,3 +28,21 @@ li span span:hover {
 li span span:hover ~ span {
   color: red;
 }
+
+li span:first-of-type {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+li span:focus {
+  outline: none;
+}
+
+li span:focus {
+  color: red;
+}
+
+li span:focus ~ span {
+  color: red;
+}
